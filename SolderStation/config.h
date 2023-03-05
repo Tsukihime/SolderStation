@@ -3,6 +3,8 @@
 
 #include "AVRPin.hpp"
 
+//#define SOFTUART 1
+
 using FanLedPin = Pc5;
 using SolderLedPin = Pc0;
 using FanPWMPin = Pb3;

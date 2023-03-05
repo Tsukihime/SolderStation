@@ -23,7 +23,9 @@ struct PID_DATA fanPidData;
 #include "lcd.h"
 #include "peripherals.h"
 
-#include "softuart.hpp"
+#ifdef SOFTUART
+    #include "softuart.hpp"
+#endif
 
 enum Mode {SOLDER, FAN, COLD_CALIBRATION, FAN_CALIBRATION, SOLDER_CALIBRATION};
 enum FanMode {OFF, SLEEP, COOLING, ON};
@@ -355,6 +357,7 @@ void saveSettings() {
     oldChange = isChangeMode();
 }
 
+#ifdef SOFTUART
 void printValue(uint16_t val) {
     uint8_t buffer[5];
     bin2bcd5(val, buffer);
@@ -372,6 +375,7 @@ void printDbg(uint16_t a, uint16_t b, uint16_t c) {
     printValue(c);
     Softuart::sendString("\r\n");
 }
+#endif
 
 void loop100ms() {
     wdt_reset();
@@ -380,8 +384,9 @@ void loop100ms() {
     processSwitches();
     processLEDs();
     saveSettings();
-
+#ifdef SOFTUART
     printDbg(fanSetupTemp, Peripherals::getFanTemp(), pwr * 2);
+#endif
 }
 
 void loop10ms() {
@@ -397,7 +402,9 @@ int main(void) {
     wdt_reset(); // Calibrator::init(); take long time ~80ms
     sei();
 
+#ifdef SOFTUART
     Softuart::init();
+#endif
 
     if (Peripherals::getButton() == Button::SET) {
         if(Peripherals::isSolderSensorOk()) {

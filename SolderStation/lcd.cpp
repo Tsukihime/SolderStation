@@ -54,7 +54,9 @@ void Lcd::draw() {
 
     uint8_t ch = ~(chars[charIndex] | heat_led);
 
-    ch |= (PORTB & (1 << PORTB5)); // block pb5 pin change because its used by soft uart
+    #ifdef SOFTUART
+        ch |= (PORTB & (1 << PORTB5)); // block pb5 pin change because its used by soft uart
+    #endif
 
     /*
     Ignore the pb3 writing because:
