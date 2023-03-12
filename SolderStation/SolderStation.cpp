@@ -9,9 +9,9 @@ extern "C" {
     #include "pid/pid.h"
 }
 
-const float K_P = 0.625; // 0.625 0.01 0
-const float K_I = 0.00;
-const float K_D = 0.00;
+const float K_P = 2.50;
+const float K_I = 0.01;
+const float K_D = 15.00;
 
 struct PID_DATA fanPidData;
 
@@ -84,8 +84,7 @@ void processFan() {
         pid_init = false;
         pid_Init(K_P * SCALING_FACTOR,  K_I * SCALING_FACTOR, K_D * SCALING_FACTOR, &fanPidData);
     }
-
-
+    
     int16_t inputValue = pid_Controller(fanSetupTemp, currentTemp, &fanPidData);
     uint8_t power = clamp(inputValue, 0, 100);
     pwr = power;
