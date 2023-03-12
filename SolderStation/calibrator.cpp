@@ -18,14 +18,14 @@ void Calibrator::init() {
     eeprom_read_block(&data, &eepromDataAddr, sizeof(data));
     if(data.magic != MAGIC) { // set defaults
         data.magic = MAGIC;
-        data.fan.coldTemp = 20;
-        data.fan.coldAdc = 109;
-        data.fan.hotTemp = 566;
-        data.fan.hotAdc = 1023;
-        data.solder.coldTemp = 20;
-        data.solder.coldAdc = 109;
-        data.solder.hotAdc = 1023;
-        data.solder.hotTemp = 566;
+        data.fan.coldTemp = 101;
+        data.fan.coldAdc = 219;
+        data.fan.hotTemp = 300;
+        data.fan.hotAdc = 639;
+        data.solder.coldTemp = 118;
+        data.solder.coldAdc = 308;
+        data.solder.hotAdc = 604;
+        data.solder.hotTemp = 255;
 
         data.fan.setupTemp = TEMPERATURE_MIN;
         data.solder.setupTemp = TEMPERATURE_MIN;
@@ -39,12 +39,12 @@ void Calibrator::save() {
 
 void Calibrator::setColdFanCalibration(uint16_t temp) {
     data.fan.coldTemp = temp;
-    data.fan.coldAdc = Peripherals::getFanAdc();
+    data.fan.coldAdc = Peripherals::getFanAverageAdc();
     save();
 }
 
-void Calibrator::setFanCalibration(uint16_t temp) {
-    data.fan.hotAdc = Peripherals::getFanAdc();
+void Calibrator::setHotFanCalibration(uint16_t temp) {
+    data.fan.hotAdc = Peripherals::getFanAverageAdc();
     data.fan.hotTemp = temp;
     save();
 }
@@ -55,12 +55,12 @@ uint16_t Calibrator::getColdFanCalibrationTemp() {
 
 void Calibrator::setColdSolderCalibration(uint16_t temp) {
     data.solder.coldTemp = temp;
-    data.solder.coldAdc = Peripherals::getSolderAdc();
+    data.solder.coldAdc = Peripherals::getSolderAverageAdc();
     save();
 }
 
-void Calibrator::setSolderCalibration(uint16_t temp) {
-    data.solder.hotAdc = Peripherals::getSolderAdc();
+void Calibrator::setHotSolderCalibration(uint16_t temp) {
+    data.solder.hotAdc = Peripherals::getSolderAverageAdc();
     data.solder.hotTemp = temp;
     save();
 }

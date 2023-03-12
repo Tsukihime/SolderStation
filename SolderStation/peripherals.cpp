@@ -173,12 +173,20 @@ uint16_t getAverageAdc(uint8_t channel) {
     return adc_accum / ADC_ACCUM_SIZE;
 }
 
+uint16_t Peripherals::getSolderAverageAdc() {
+    return getAverageAdc(SOLDER_TEMP_ADC_CH);
+}
+
+uint16_t Peripherals::getFanAverageAdc() {
+    return getAverageAdc(FAN_TEMP_ADC_CH);
+}
+
 uint16_t Peripherals::getSolderTemp() {
-    return Calibrator::convertSolderTemp(getAverageAdc(SOLDER_TEMP_ADC_CH));
+    return Calibrator::convertSolderTemp(getSolderAverageAdc());
 }
 
 uint16_t Peripherals::getFanTemp() {
-    return Calibrator::convertFanTemp(getAverageAdc(FAN_TEMP_ADC_CH));
+    return Calibrator::convertFanTemp(getFanAverageAdc());
 }
 
 Button Peripherals::getButton() {

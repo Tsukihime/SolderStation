@@ -17,6 +17,8 @@ class Peripherals {
         static uint16_t getAirFlowAjustment();
         static uint16_t getSolderAdc();
         static uint16_t getFanAdc();
+        static uint16_t getSolderAverageAdc();
+        static uint16_t getFanAverageAdc();
         static uint16_t getSolderTemp();
         static uint16_t getFanTemp();
         static Button getButton();

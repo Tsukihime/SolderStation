@@ -36,4 +36,7 @@ const uint16_t TEMPERATURE_MAX = 500;
 const uint16_t LCD_BLINK_DELAY = 500; // 500 ms
 const uint16_t CHANGE_MODE_DELAY = 300; // 3000 ms
 
+const uint16_t COLD_CALIBRATION_TEMP = 150;
+const uint16_t HOT_CALIBRATION_TEMP = 250;
+
 #endif /* CONFIG_H_ */

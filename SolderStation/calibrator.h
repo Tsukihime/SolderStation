@@ -33,11 +33,11 @@ class Calibrator {
         static uint16_t convertFanTemp(uint16_t adcValue);
 
         static void setColdFanCalibration(uint16_t temp);
-        static void setFanCalibration(uint16_t temp);
+        static void setHotFanCalibration(uint16_t temp);
         static uint16_t getColdFanCalibrationTemp();
 
         static void setColdSolderCalibration(uint16_t temp);
-        static void setSolderCalibration(uint16_t temp);
+        static void setHotSolderCalibration(uint16_t temp);
         static uint16_t getColdSolderCalibrationTemp();
 
         static void getSetupTemp(uint16_t &fanTemp, uint16_t &solderTemp);

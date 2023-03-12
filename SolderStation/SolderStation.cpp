@@ -27,7 +27,7 @@ struct PID_DATA fanPidData;
     #include "softuart.hpp"
 #endif
 
-enum Mode {SOLDER, FAN, COLD_CALIBRATION, FAN_CALIBRATION, SOLDER_CALIBRATION};
+enum Mode {SOLDER, FAN, FAN_CALIBRATION, SOLDER_CALIBRATION};
 enum FanMode {OFF, SLEEP, COOLING, ON};
 
 Mode mode = Mode::SOLDER;
@@ -163,9 +163,6 @@ uint16_t& getCurrentModeValue() {
         case SOLDER:
             return solderSetupTemp;
 
-        case COLD_CALIBRATION:
-            return calibratorColdTemp;
-
         case FAN_CALIBRATION:
             return calibratorFanTemp;
 
@@ -181,32 +178,32 @@ void changeButtonsClick(bool isUp) {
     changeModeOn();
     int8_t delta = isUp ? +1 : -1;
     uint16_t &value = getCurrentModeValue();
-    if(mode == Mode::COLD_CALIBRATION) {
-        value = clamp((int16_t)value + delta, 0, (int16_t)TEMPERATURE_MAX);
-    } else {
-        value = clamp(value + delta, TEMPERATURE_MIN, TEMPERATURE_MAX);
-    }
+    value = clamp(value + delta, TEMPERATURE_MIN, TEMPERATURE_MAX);
 }
 
 void buttonSetClick() {
     switch(mode) {
-        case COLD_CALIBRATION:
-            if(Peripherals::isSolderSensorOk()) {
-                Calibrator::setColdSolderCalibration(calibratorColdTemp);
-            }
-            if(Peripherals::isFanSensorOk()) {
-                Calibrator::setColdFanCalibration(calibratorColdTemp);
-            }
-            mode = Mode::SOLDER;
-        break;
-
         case SOLDER_CALIBRATION:
-            Calibrator::setSolderCalibration(calibratorSolderTemp);
+            if(calibratorSolderTemp >= HOT_CALIBRATION_TEMP) {
+                Calibrator::setHotSolderCalibration(calibratorSolderTemp);
+            }
+
+            if(calibratorSolderTemp <= COLD_CALIBRATION_TEMP) {
+                Calibrator::setColdSolderCalibration(calibratorSolderTemp);
+            }
+
             mode = Mode::SOLDER;
         break;
 
         case FAN_CALIBRATION:
-            Calibrator::setFanCalibration(calibratorFanTemp);
+            if(calibratorFanTemp >= HOT_CALIBRATION_TEMP) {
+                Calibrator::setHotFanCalibration(calibratorFanTemp);
+            }
+
+            if(calibratorFanTemp <= COLD_CALIBRATION_TEMP) {
+                Calibrator::setColdFanCalibration(calibratorFanTemp);
+            }
+
             mode = Mode::FAN;
         break;
 
@@ -280,19 +277,16 @@ void processButtons() {
 
 void processLEDs() {
     FanLedPin::Set(mode == Mode::FAN ||
-                   mode == Mode::FAN_CALIBRATION ||
-                   mode == Mode::COLD_CALIBRATION
+                   mode == Mode::FAN_CALIBRATION
     );
 
     SolderLedPin::Set(mode == Mode::SOLDER ||
-                      mode == Mode::SOLDER_CALIBRATION ||
-                      mode == Mode::COLD_CALIBRATION
+                      mode == Mode::SOLDER_CALIBRATION
     );
 
     Lcd::setBlink(false);
 
     bool changeMode = isChangeMode() ||
-                      mode == Mode::COLD_CALIBRATION ||
                       mode == Mode::FAN_CALIBRATION ||
                       mode == Mode::SOLDER_CALIBRATION;
 
@@ -404,15 +398,6 @@ int main(void) {
 #ifdef SOFTUART
     Softuart::init();
 #endif
-
-    if (Peripherals::getButton() == Button::SET) {
-        if(Peripherals::isSolderSensorOk()) {
-            calibratorColdTemp = Calibrator::getColdSolderCalibrationTemp();
-        } else {
-            calibratorColdTemp = Calibrator::getColdFanCalibrationTemp();
-        }
-        mode = Mode::COLD_CALIBRATION;
-    }
 
     Scheduler::setTimer(loop10ms, 10, true);
     Scheduler::setTimer(loop100ms, 100, true);
