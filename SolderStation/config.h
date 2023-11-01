@@ -27,7 +27,7 @@ const uint8_t SOLDER_TEMP_ADC_CH = 6;
 const uint8_t BUTTONS_ADC_CH = 4;
 
 const uint8_t FAN_AIR_FLOW_MAX = 255; // pwm
-const uint8_t FAN_AIR_FLOW_MIN = 128; // pwm
+const uint8_t FAN_AIR_FLOW_MIN = 8;  // pwm
 const uint8_t LONG_PRESS_DELAY = 100; // 1 second
 
 const uint16_t TEMPERATURE_MIN = 100;
